@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navigation from "./components/navigation/page";
-import { PropsWithChildren } from 'react';
+import NavigationWrapper from "./components/navigationWrapper";
 import { ToastProvider } from "@radix-ui/react-toast";
-
+import { Toaster } from "./components/ui/toaster";
+import { SidebarProvider,SidebarTrigger } from "./components/ui/sidebar";
+import { AppSidebar } from "./components/sidebar/sidebar";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,11 +28,17 @@ export default function RootLayout({ children }: Readonly<{
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+ className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+ suppressHydrationWarning
         >
         <ToastProvider>
-        <Navigation />
+          <SidebarProvider>
+        {/* <NavigationWrapper/> */}
+        <AppSidebar/>
+        <SidebarTrigger/>
         {children}
+        <Toaster />
+        </SidebarProvider>
         </ToastProvider>
       </body>
     </html>

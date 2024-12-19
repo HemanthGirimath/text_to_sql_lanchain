@@ -1,7 +1,13 @@
 import Link from 'next/link'
 import { Button } from "../../components/ui/button"
+import { Session } from '@supabase/supabase-js'
 
-export default function Navigation() {
+interface NavigationProps {
+  currentSession: Session | null;
+}
+
+
+export default function Navigation({currentSession}:NavigationProps) {
   return (
     <nav className="border-b">
       <div className="flex h-16 items-center px-4 container mx-auto justify-between">
@@ -15,9 +21,9 @@ export default function Navigation() {
           <Link href="/sign-in">
             <Button variant="ghost">Sign In</Button>
           </Link>
-          <Link href="/sign-up">
+          {/* <Link href="/sign-up">
             <Button>Sign Up</Button>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </nav>
