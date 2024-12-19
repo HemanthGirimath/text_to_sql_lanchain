@@ -36,16 +36,13 @@ const TextToSqlChat: React.FC = () => {
     setInput('');
 
     try {
-      // Simulated LLM API call - replace with your actual endpoint
       const response = await axios.post('/api/groq', { query: input });
-      
-      // Determine if response is JSON
       const isJson = typeof response.data === 'object';
       
       const aiMessage: Message = {
         id: Date.now().toString(),
         type: 'ai',
-        content: isJson ? JSON.stringify(response.data, null, 2) : response.data,
+        content: isJson ? JSON.stringify(response.data.data, null, 2) : response.data,
         isJson
       };
 

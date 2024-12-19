@@ -79,15 +79,17 @@ export async function updatePassword(newPassword: string): Promise<{ error: Auth
 
 export function getSupabaseClient(): SupabaseClient {
   if (!supabaseClient) {
+    const isServer = typeof window === 'undefined'
+    
     supabaseClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         auth: {
-          persistSession: true, // Change this to true if you want to persist across browser sessions
-          storage: window.sessionStorage, // Using sessionStorage for session-only persistence
-          autoRefreshToken: true,
-          detectSessionInUrl: true
+          persistSession: !isServer,
+          storage: isServer ? undefined : window.sessionStorage,
+          autoRefreshToken: !isServer,
+          detectSessionInUrl: !isServer
         },
       }
     )
@@ -132,4 +134,36 @@ export function subscribeToAuthChanges(callback: (session: Session | null) => vo
   })
 
   return subscription
+}
+
+
+export async function executeGeneratedQuery(sql: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  try {
+    console.log('Executing SQL:', sql);
+
+    // Add additional logging to check RLS context
+    const { data: userInfo } = await supabase.auth.getUser();
+    console.log('Current user context:', userInfo);
+
+    const { data, error } = await supabase
+      .rpc('execute_raw_query', {
+        sql: sql
+      });
+
+    if (error) {
+      console.error('Supabase RPC Error:', error);
+      throw error;
+    }
+
+    console.log('Raw Supabase response:', data);
+    return data;
+  } catch (error) {
+    console.error('Execute Query Error:', error);
+    throw error;
+  }
 }
