@@ -1,4 +1,3 @@
-// sign-in/page.tsx
 'use client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -7,158 +6,137 @@ import { Button } from "@/app/components/ui/button"
 import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/app/components/ui/alert-dialog"
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/app/components/ui/card"
+import { Icons } from "@/app/components/ui/icons"
+import { useToast } from "@/app/components/ui/use-toast"
+import {AnimatedDemo} from '@/app/components/ui/animated-demo' 
+
 
 export default function SignIn() {
     const router = useRouter()
+    const { toast } = useToast()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [isUserAuthenticated, setIsUserAuthenticated] = useState(false)
-    const [showAlert, setShowAlert] = useState(false)
-    const [alertContent, setAlertContent] = useState({
-        title: '',
-        description: '',
-        isError: false
-    })
 
     useEffect(() => {
         const checkAuthStatus = async () => {
             const authenticated = await isAuthenticated()
-            setIsUserAuthenticated(authenticated)
             if (authenticated) {
-                showMessage(
-                    "Already signed in",
-                    "You are already signed in.",
-                    
-                )
+                router.push('/chat')
             }
         }
         checkAuthStatus()
     }, [router])
 
-    const showMessage = (title: string, description: string, isError: boolean = false) => {
-        setAlertContent({ title, description, isError })
-        setShowAlert(true)
-    }
-
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
 
-        const { error } = await signInWithEmail({ email, password })
-
-        if (error) {
-            showMessage(
-                "Login Failed",
-                error.message || "Unable to log in. Please try again.",
-                true
-            )
+        try {
+            const { error } = await signInWithEmail({ email, password })
+            if (error) {
+                toast({
+                    variant: "destructive",
+                    title: "Error signing in",
+                    description: error.message,
+                })
+            } else {
+                router.push('/chat')
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "An unexpected error occurred",
+            })
+        } finally {
             setIsLoading(false)
-            return
         }
-
-        showMessage(
-            "Success",
-            "Logged in successfully! Redirecting...",
-            false
-        )
-
-        // Redirect after a short delay
-        setTimeout(() => {
-            router.push('/chat')
-        }, 2000)
     }
 
     return (
-        <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2">
-            <div className="hidden bg-muted lg:block">
-                {/* <img
-                    alt="Login background"
-                    className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-                /> */}
-            </div>
-
-            <div className="flex items-center justify-center py-12">
-                <div className="mx-auto grid w-[350px] gap-6">
-                    <div className="grid gap-2 text-center">
-                        <h1 className="text-3xl font-bold">Login</h1>
-                        <p className="text-balance text-muted-foreground">
-                            Enter your credentials to access your account
+        <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+            <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
+                <div className="absolute inset-0 bg-zinc-900" />
+                <div className="relative z-20 flex items-center text-lg font-medium">
+                    <Icons.database className="mr-2 h-6 w-6" />
+                    Text to SQL
+                </div>
+                <div className="relative z-20 flex-grow flex flex-col justify-center">
+                    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-4 h-[400px]">
+                        <div className="h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
+                            <AnimatedDemo />
+                        </div>
+                    </div>
+                    <blockquote className="mt-8">
+                        <p className="text-lg text-center">
+                            Transform your natural language into SQL queries effortlessly.
                         </p>
-                    </div>
-
-                    <form onSubmit={handleSignIn} className="grid gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="you@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                disabled={isUserAuthenticated}
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                disabled={isUserAuthenticated}
-                            />
-                        </div>
-
-                        <Button 
-                            type="submit" 
-                            className="w-full" 
-                            disabled={isLoading || isUserAuthenticated}
-                        >
-                            {isLoading ? "Signing in..." : 
-                             isUserAuthenticated ? "Already signed in" : 
-                             "Sign In"}
-                        </Button>
-                    </form>
-
-                    <div className="mt-4 text-center text-sm">
-                        Don't have an account?{" "}
-                        <Link href="/sign-up" className="text-primary hover:underline">
-                            Sign up
-                        </Link>
-                    </div>
+                    </blockquote>
                 </div>
             </div>
-
-            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className={alertContent.isError ? "text-destructive" : "text-primary"}>
-                            {alertContent.title}
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {alertContent.description}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => setShowAlert(false)}>
-                            OK
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <div className="lg:p-8">
+                <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+                    <Card>
+                        <CardHeader className="space-y-1">
+                            <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+                            <CardDescription className="text-center">
+                                Enter your email and password to sign in
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleSignIn}>
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            placeholder="name@example.com"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="password">Password</Label>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <Button disabled={isLoading}>
+                                        {isLoading && (
+                                            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                                        )}
+                                        Sign In
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                        <CardFooter className="flex flex-col space-y-4">
+                            <div className="text-sm text-muted-foreground text-center">
+                                Don't have an account?{" "}
+                                <Link href="/sign-up" className="text-primary hover:underline">
+                                    Sign up
+                                </Link>
+                            </div>
+                        </CardFooter>
+                    </Card>
+                </div>
+            </div>
         </div>
     )
 }

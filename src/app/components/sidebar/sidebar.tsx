@@ -1,67 +1,42 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+'use client';
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/app/components/ui/sidebar"
-import { title } from "process"
-import UserProfile from "../profile/page"
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+import { Button } from "@/app/components/ui/button";
+import { RecentChats } from "./recent-chats";
+import UserProfile from "../profile/page";
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Chat",
-    url: "/chat",
-    icon: Inbox,
-  },
-  {
-    title: "Login",
-    url: "/sign-in",
-    icon: Calendar,
-  }
-]
+
 
 export function AppSidebar() {
-  return (
-    <Sidebar>
-      <SidebarContent className="flex flex-col h-full">
-        <SidebarGroup>
-          <SidebarGroupLabel>Recent Chat's</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          Recent chat's goes here ..
-        </SidebarGroup>
+  const { theme, setTheme } = useTheme();
 
-      </SidebarContent>
-      <SidebarFooter>
-        <UserProfile />
-        </SidebarFooter>
-    </Sidebar>
-  )
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-2 p-4">
+        <h1 className="text-lg font-semibold">Text to SQL</h1>
+      </div>
+      
+      <div className="flex-1 overflow-auto">
+        <RecentChats />
+      </div>
+
+      <div className="mt-auto  p-4">
+        <div className="flex items-center justify-between mb-4">
+          <UserProfile />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }

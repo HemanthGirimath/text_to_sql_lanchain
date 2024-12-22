@@ -1,5 +1,5 @@
 import { ChatGroq } from "@langchain/groq";
-import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatPromptTemplate, PromptTemplate } from "@langchain/core/prompts";
 import { z } from "zod";
 import {schema} from "../api/groq/schema"
 import { executeGeneratedQuery } from '@/app/auth/supabase-client'
@@ -132,11 +132,7 @@ const structuredLLM = model.withStructuredOutput(SqlQueryResponseSchema);
 
 export async function createSqlGenerationChain( user_question:string) {
     const chain = sqlGenerationPrompt.pipe(structuredLLM);
-  
     try {
-    //   console.log("Input Schema:", schema);
-    //   console.log("User Question:", user_question);
-
       const response = await chain.invoke({ user_question,schema });
       console.log("Structured LLM Response:", response);
       return response;
