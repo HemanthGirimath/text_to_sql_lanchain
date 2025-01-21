@@ -14,29 +14,52 @@ import {
 } from "@/app/components/ui/dropdown-menu"
 import { LogOut, User } from 'lucide-react'
 
+interface UserMetadata {
+  avatar_url: string | null;
+  // other properties if needed
+}
+
+interface User {
+  id: string;
+  email: string;
+  user_metadata: UserMetadata | null;
+}
+
 export default function UserProfile() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null);
   const supabase = getSupabaseClient()
 
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
+      setUser(session?.user ? {
+        id: session.user.id,
+        email: session.user.email ?? '',
+        user_metadata: {
+          avatar_url: session.user.user_metadata?.avatar_url || null,
+          // other properties from user_metadata if needed
+        }
+      } : null);
     }
     getInitialSession()
-
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+      setUser(session?.user ? {
+        id: session.user.id,
+        email: session.user.email ?? '',
+        user_metadata: {
+          avatar_url: session.user.user_metadata?.avatar_url || null,
+          // other properties from user_metadata if needed
+        }
+      } : null);
     })
 
     // Cleanup subscription
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [supabase.auth])
 
   const handleSignOut = async () => {
     try {
@@ -53,7 +76,7 @@ export default function UserProfile() {
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={user.user_metadata?.avatar_url} />
+          <AvatarImage src={user.user_metadata?.avatar_url || undefined} />
           <AvatarFallback className="bg-primary/10">
             {user.email?.charAt(0).toUpperCase()}
           </AvatarFallback>

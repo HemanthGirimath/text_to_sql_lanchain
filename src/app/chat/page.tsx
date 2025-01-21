@@ -83,7 +83,7 @@ const TextToSqlChat = () => {
       // Update conversation title with first message if it's new
       const conversationsKey = `user_${userId}_conversations`;
       const conversations = JSON.parse(localStorage.getItem(conversationsKey) || '[]');
-      const conversation = conversations.find((c: any) => c.id === currentConversationId);
+      const conversation = conversations.find((c: { id: string }) => c.id === currentConversationId);
       if (conversation && conversation.title === 'New Conversation') {
         conversation.title = messages[0].content.substring(0, 30) + (messages[0].content.length > 30 ? '...' : '');
         localStorage.setItem(conversationsKey, JSON.stringify(conversations));
@@ -162,7 +162,7 @@ const TextToSqlChat = () => {
         <div className="flex-1 overflow-y-auto">
           <ScrollArea className="h-full">
             <div className="space-y-6 max-w-4xl mx-auto px-4">
-              {messages.map((message) => (
+              {messages.map((message: Message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} m-6`}
@@ -188,7 +188,7 @@ const TextToSqlChat = () => {
                             <Table>
                               <TableHeader>
                                 <TableRow className="bg-primary/10 sticky top-0">
-                                  {Object.keys(JSON.parse(message.content)[0] || {}).map((header) => (
+                                  {Object.keys(JSON.parse(message.content)[0] || {}).map((header: string) => (
                                     <TableHead key={header} className="font-semibold">
                                       {header}
                                     </TableHead>
@@ -196,10 +196,10 @@ const TextToSqlChat = () => {
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
-                                {JSON.parse(message.content).map((row: any, rowIndex: number) => (
+                                {JSON.parse(message.content).map((row: { [key: string]: string }, rowIndex: number) => (
                                   <TableRow key={rowIndex}>
-                                    {Object.values(row).map((cell: any, cellIndex: number) => (
-                                      <TableCell key={cellIndex}>{cell as string}</TableCell>
+                                    {Object.values(row).map((cell: string, cellIndex: number) => (
+                                      <TableCell key={cellIndex}>{cell}</TableCell>
                                     ))}
                                   </TableRow>
                                 ))}

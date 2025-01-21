@@ -5,23 +5,28 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { RecentChats } from "./recent-chats";
 import UserProfile from "../profile/page";
-import { useState } from "react";
-import {schema} from '../../api/groq/schema'
 
+// Removed unused variables
+// const schema = ...; // Uncomment if needed
+// const isOpen = ...; // Uncomment if needed
+// const toggleSidebar = ...; // Uncomment if needed
+// const toggleDrawer = ...; // Uncomment if needed
+// Removed unused import
+// import { useState } from 'react'; // Uncomment if needed
 
 interface AppSidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
+
 }
 
 
-export function AppSidebar({ isOpen, toggleSidebar }: AppSidebarProps) {
+export function AppSidebar({  }: AppSidebarProps) {
   const { theme, setTheme } = useTheme();
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-  const toggleDrawer = () => {
-    setDrawerOpen(!isDrawerOpen);
-  };
+  // const toggleDrawer = () => {
+  //   setDrawerOpen(!isDrawerOpen);
+  // };
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 p-4">

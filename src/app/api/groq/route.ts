@@ -1,7 +1,9 @@
 import { createSqlGenerationChain, executeQuery } from '../../groq-setup/client';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { v4 as uuidv4 } from "uuid";
+
+// Removed unused variable uuidv4
+// const uuidv4 = require('uuid').v4; // Uncomment this line if needed
 
 export async function POST(request: NextRequest) {
   try {

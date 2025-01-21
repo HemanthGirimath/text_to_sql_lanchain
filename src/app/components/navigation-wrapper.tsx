@@ -6,7 +6,6 @@ import { SidebarProvider, useSidebar } from "@/app/components/ui/sidebar";
 import { AppSidebar } from "@/app/components/sidebar/sidebar";
 import { Toaster } from "@/app/components/ui/toaster";
 import { type ReactNode } from 'react';
-import { useState } from 'react';
 
 interface ClientWrapperProps {
   children: ReactNode;
@@ -65,6 +64,8 @@ function NavigationContent({ children }: ClientWrapperProps) {
 }
 
 export default function ClientWrapper({ children }: ClientWrapperProps) {
+  // Removed unused variable useState
+  // const [state, setState] = useState(); // Uncomment if needed
   return (
     <SidebarProvider>
       <NavigationContent>{children}</NavigationContent>

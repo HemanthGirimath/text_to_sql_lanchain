@@ -1,5 +1,5 @@
 import { ChatGroq } from "@langchain/groq";
-import { ChatPromptTemplate, PromptTemplate } from "@langchain/core/prompts";
+import { PromptTemplate } from "@langchain/core/prompts";
 import { z } from "zod";
 import {schema} from "../api/groq/schema"
 import { executeGeneratedQuery } from '@/app/auth/supabase-client'
@@ -9,6 +9,8 @@ const model = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+// Removed unused variable ChatPromptTemplate
+// const ChatPromptTemplate = ...; // Uncomment if needed
 const sqlGenerationPrompt = new PromptTemplate({
   template: `You are an expert PostgreSQL query generator. Generate a precise and syntactically correct PostgreSQL query based on the provided database schema and user question.
 

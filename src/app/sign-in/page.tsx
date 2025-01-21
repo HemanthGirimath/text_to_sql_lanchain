@@ -6,18 +6,10 @@ import { Button } from "@/app/components/ui/button"
 import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import Link from "next/link"
-import { useTheme } from "next-themes"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/app/components/ui/card"
-import { Icons } from "@/app/components/ui/icons"
 import { useToast } from "@/app/components/ui/use-toast"
 import {AnimatedDemo} from '@/app/components/ui/animated-demo' 
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../components/ui/card'
+import { Icons } from '../components/ui/icons'
 
 
 export default function SignIn() {
@@ -42,22 +34,25 @@ export default function SignIn() {
         setIsLoading(true)
 
         try {
-            const { error } = await signInWithEmail({ email, password })
-            if (error) {
+            const response = await signInWithEmail({ email, password })
+            if (response.error) {
                 toast({
                     variant: "destructive",
                     title: "Error signing in",
-                    description: error.message,
+                    description: response.error.message,
                 })
             } else {
                 router.push('/chat')
             }
         } catch (error) {
+            // Removed unused variable error
+            // const error = error; // Uncomment if needed
             toast({
                 variant: "destructive",
                 title: "Error",
                 description: "An unexpected error occurred",
             })
+            console.log(error)
         } finally {
             setIsLoading(false)
         }
@@ -128,7 +123,7 @@ export default function SignIn() {
                         </CardContent>
                         <CardFooter className="flex flex-col space-y-4">
                             <div className="text-sm text-muted-foreground text-center">
-                                Don't have an account?{" "}
+                                Don&apos;t have an account?{" "}
                                 <Link href="/sign-up" className="text-primary hover:underline">
                                     Sign up
                                 </Link>

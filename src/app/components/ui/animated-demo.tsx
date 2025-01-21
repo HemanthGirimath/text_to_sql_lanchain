@@ -68,7 +68,9 @@ const demoMessages: DemoMessage[] = [
 
 export function AnimatedDemo() {
     const [messages, setMessages] = useState<{message: DemoMessage, displayedText: string, showTable: boolean}[]>([]);
-    const [isTyping, setIsTyping] = useState(true);
+    
+    // Removed unused variables
+    // const [isTyping, setIsTyping] = useState(false); // Uncomment if needed
 
     useEffect(() => {
         const addMessage = async (messageIndex: number) => {

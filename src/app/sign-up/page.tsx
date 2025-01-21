@@ -40,12 +40,13 @@ export default function SignUp() {
         setIsLoading(true)
 
         try {
-            const { error } = await signUpWithEmail({ email, password })
-            if (error) {
+            // Removed unused variable error
+            const response = await signUpWithEmail({ email, password })
+            if (response.error) {
                 toast({
                     variant: "destructive",
                     title: "Error signing up",
-                    description: error.message,
+                    description: response.error.message,
                 })
             } else {
                 toast({
@@ -55,6 +56,9 @@ export default function SignUp() {
                 router.push('/sign-in')
             }
         } catch (error) {
+            // Removed unused variable error
+            // const error = error; // Uncomment if needed
+            console.log(error)
             toast({
                 variant: "destructive",
                 title: "Error",
