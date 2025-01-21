@@ -14,31 +14,33 @@ interface ClientWrapperProps {
 
 function NavigationContent({ children }: ClientWrapperProps) {
   const pathname = usePathname();
-  const { isOpen, toggleSidebar: toggle } = useSidebar();
+  // const { isOpen, toggleSidebar: toggle } = useSidebar();
+  const {toggleSidebar} = useSidebar();
+  const isOpen = true
   const showSidebar = pathname.startsWith('/chat');
-  const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    if (!isOpen) toggle();
-  };
 
-  const handleMouseLeave = (e: React.MouseEvent) => {
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (relatedTarget?.closest('.dropdown-menu')) {
-      return;
-    }
-    setIsHovered(false);
-    if (isOpen) toggle();
-  };
+  // const handleMouseEnter = () => {
+  //   setIsHovered(true);
+  //   if (!isOpen) toggle();
+  // };
+
+  // const handleMouseLeave = (e: React.MouseEvent) => {
+  //   const relatedTarget = e.relatedTarget as HTMLElement;
+  //   if (relatedTarget?.closest('.dropdown-menu')) {
+  //     return;
+  //   }
+  //   setIsHovered(false);
+  //   if (isOpen) toggle();
+  // };
 
   return (
     <div className="flex h-screen bg-black">
       {showSidebar && (
      <div 
      className="group fixed inset-y-0 left-0 z-50 flex"
-     onMouseEnter={handleMouseEnter}
-     onMouseLeave={handleMouseLeave}
+    //  onMouseEnter={handleMouseEnter}
+    //  onMouseLeave={handleMouseLeave}
  >
      {/* Even smaller hover trigger area */}
      <div className="w-[2px] h-full bg-zinc-800/10 hover:bg-zinc-800/20 cursor-pointer" />
@@ -49,7 +51,7 @@ function NavigationContent({ children }: ClientWrapperProps) {
              ? "opacity-100 translate-x-0" 
              : "opacity-0 -translate-x-full pointer-events-none"
      }`}>
-         <AppSidebar />
+         <AppSidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
      </div>
  </div>
       )}
